@@ -59,7 +59,7 @@ http.listen(config.port, async function () {
       console.log("Creating Subscription for", streamer.streamer_name);
       await twitchClient.createOnlineWebhookSubscription(
         streamerID,
-        "https://a880-23-123-247-200.ngrok-free.app",
+        process.env.CALLBACK_URL,
         "bookdub_secret22"
       );
     } else {
