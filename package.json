@@ -1,0 +1,20 @@
+{
+  "name": "twitch-discord-notifier",
+  "version": "1.0.0",
+  "type": "module",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@twurple/api": "^7.1.0",
+    "@twurple/eventsub-ws": "^7.1.0",
+    "dotenv": "^16.4.5",
+    "express": "^4.19.2",
+    "tsscmp": "^1.0.6"
+  }
+}
