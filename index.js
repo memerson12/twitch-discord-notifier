@@ -1,14 +1,15 @@
 import { readFileSync } from "fs";
-import { createServer } from "http";
+import { createServer } from "https";
 import TwitchClient from "./twitch.js";
 import DiscordNotifier from "./discord.js";
 import "dotenv/config";
 
 // Load configuation
-// const config = JSON.parse(fs.readFileSync(path.join(__dirname, "config.json")));
 const config = {
   port: process.env.PORT || 8000,
   hook_secret: process.env.HOOK_SECRET,
+  sslKeyPath: process.env.SSL_KEY_PATH,
+  sslCertPath: process.env.SSL_CERT_PATH,
 };
 
 // Require depedancies
@@ -29,7 +30,14 @@ const streamersData = JSON.parse(readFileSync("./streamers.json", "utf-8"));
 
 // Express basics
 const app = express();
-const http = createServer(app);
+
+const sslOptions = {
+  key: readFileSync(config.sslKeyPath),
+  cert: readFileSync(config.sslCertPath),
+};
+
+const http = createServer(sslOptions, app);
+
 http.listen(config.port, async function () {
   console.log("Server raised on", config.port);
   twitchClient.connect();
@@ -184,27 +192,6 @@ app
         };
 
         notifier.notify(streamInfoJson);
-
-        // write out the data to a log for now
-        // appendFileSync(
-        //   join(__dirname, "webhooks.log"),
-        //   JSON.stringify({
-        //     body: req.body,
-        //     headers: req.headers,
-        //   }) + "\n"
-        // );
-        // // pretty print the last webhook to a file
-        // appendFileSync(
-        //   join(__dirname, "last_webhooks.log"),
-        //   JSON.stringify(
-        //     {
-        //       body: req.body,
-        //       headers: req.headers,
-        //     },
-        //     null,
-        //     4
-        //   )
-        // );
       } else {
         console.log("Invalid hook sent to me");
         // probably should error here as an invalid hook payload
