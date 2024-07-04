@@ -168,30 +168,36 @@ app
         // you can do whatever you want with the data
         // it's in req.body
 
-        const event = req.body.event;
-        const streamer = event.broadcaster_user_name;
+        try {
+          const event = req.body.event;
+          const streamer = event.broadcaster_user_name;
 
-        const user = await twitchClient.getUserByName(streamer);
-        const stream = await twitchClient.getStreamByName(streamer);
+          const user = await twitchClient.getUserByName(streamer);
+          const stream = await twitchClient.getStreamByName(streamer);
 
-        const goingLiveMessage = streamersData.find(
-          (streamerInfo) => streamerInfo.streamer_name === streamer
-        ).going_live_message;
+          const goingLiveMessage = streamersData.find(
+            (streamerInfo) =>
+              streamerInfo.streamer_name === event.broadcaster_user_login
+          ).going_live_message;
 
-        const streamInfoJson = {
-          game: stream.game_name,
-          title: stream.title,
-          thumbnailURL: stream.thumbnail_url
-            .replace("{width}", 716)
-            .replace("{height}", 404),
-          streamerName: stream.user_login,
-          streamStart: stream.started_at,
-          profileURL: user.profile_image_url,
-          streamURL: `https://twitch.tv/${stream.user_login}`,
-          goingLiveMessage,
-        };
+          const streamInfoJson = {
+            game: stream.game_name,
+            title: stream.title,
+            thumbnailURL: stream.thumbnail_url
+              .replace("{width}", 716)
+              .replace("{height}", 404),
+            streamerName: stream.user_login,
+            streamStart: stream.started_at,
+            profileURL: user.profile_image_url,
+            streamURL: `https://twitch.tv/${stream.user_login}`,
+            goingLiveMessage,
+          };
 
-        notifier.notify(streamInfoJson);
+          notifier.notify(streamInfoJson);
+        } catch (error) {
+          console.error("Error:", error);
+          // Handle the error here
+        }
       } else {
         console.log("Invalid hook sent to me");
         // probably should error here as an invalid hook payload
