@@ -184,8 +184,8 @@ app
             game: stream.game_name,
             title: stream.title,
             thumbnailURL: stream.thumbnail_url
-              .replace("{width}", 716)
-              .replace("{height}", 404),
+              .replace("{width}", 800)
+              .replace("{height}", 500),
             streamerName: stream.user_login,
             streamStart: stream.started_at,
             profileURL: user.profile_image_url,
