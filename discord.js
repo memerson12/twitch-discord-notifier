@@ -49,8 +49,6 @@ class DiscordNotifier {
         "https://cdn.discordapp.com/icons/1123463570445844480/6211998a5621eb19fe58701d30def49d.webp?size=240",
     };
 
-    console.log(messageTemplate);
-
     const message = await fetch(this.DISCORD_WEBHOOK, {
       method: "POST",
       headers: {
