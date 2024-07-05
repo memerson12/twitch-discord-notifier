@@ -127,86 +127,77 @@ app.use(
 );
 
 // Routes
-app
-  .route("/")
-  .get((req, res) => {
-    console.log("Incoming Get request on /");
-    res.send("There is no GET Handler");
-  })
-  .post(async (req, res) => {
-    console.log("Incoming Post request on /", req.body);
+app.route("/").post(async (req, res) => {
+  if (res.headersSent) return;
 
-    if (res.headersSent) return;
+  if (req.twitch_eventsub) {
+    // is it a verification request
+    if (
+      req.headers["twitch-eventsub-message-type"] ==
+      "webhook_callback_verification"
+    ) {
+      // it's a another check for if it's a challenge request
+      if (req.body.hasOwnProperty("challenge")) {
+        console.log("Got a challenge, return the challenge");
+        res.send(encodeURIComponent(req.body.challenge));
+        return;
+      }
+      // unexpected hook request
+      res.status(403).send("Denied");
+    } else if (req.headers["twitch-eventsub-message-type"] == "revocation") {
+      // the webhook was revoked
+      // you should probably do something more useful here
+      // than this example does
+      res.send("Ok");
+    } else if (req.headers["twitch-eventsub-message-type"] == "notification") {
+      // console.log("The signature matched");
+      // the signature passed so it should be a valid payload from Twitch
+      // we ok as quickly as possible
+      res.send("Ok");
 
-    if (req.twitch_eventsub) {
-      // is it a verification request
-      if (
-        req.headers["twitch-eventsub-message-type"] ==
-        "webhook_callback_verification"
-      ) {
-        // it's a another check for if it's a challenge request
-        if (req.body.hasOwnProperty("challenge")) {
-          console.log("Got a challenge, return the challenge");
-          res.send(encodeURIComponent(req.body.challenge));
-          return;
-        }
-        // unexpected hook request
-        res.status(403).send("Denied");
-      } else if (req.headers["twitch-eventsub-message-type"] == "revocation") {
-        // the webhook was revoked
-        // you should probably do something more useful here
-        // than this example does
-        res.send("Ok");
-      } else if (
-        req.headers["twitch-eventsub-message-type"] == "notification"
-      ) {
-        console.log("The signature matched");
-        // the signature passed so it should be a valid payload from Twitch
-        // we ok as quickly as possible
-        res.send("Ok");
+      // you can do whatever you want with the data
+      // it's in req.body
 
-        // you can do whatever you want with the data
-        // it's in req.body
+      try {
+        const event = req.body.event;
+        const streamer = event.broadcaster_user_name;
 
-        try {
-          const event = req.body.event;
-          const streamer = event.broadcaster_user_name;
+        const user = await twitchClient.getUserByName(streamer);
+        const stream = await twitchClient.getStreamByName(streamer);
 
-          const user = await twitchClient.getUserByName(streamer);
-          const stream = await twitchClient.getStreamByName(streamer);
+        const goingLiveMessage = streamersData.find(
+          (streamerInfo) =>
+            streamerInfo.streamer_name === event.broadcaster_user_login
+        ).going_live_message;
 
-          const goingLiveMessage = streamersData.find(
-            (streamerInfo) =>
-              streamerInfo.streamer_name === event.broadcaster_user_login
-          ).going_live_message;
+        const streamInfoJson = {
+          game: stream.game_name,
+          title: stream.title,
+          thumbnailURL: stream.thumbnail_url
+            .replace("{width}", 716)
+            .replace("{height}", 404),
+          streamerName: stream.user_login,
+          streamStart: stream.started_at,
+          profileURL: user.profile_image_url,
+          streamURL: `https://twitch.tv/${stream.user_login}`,
+          goingLiveMessage,
+        };
 
-          const streamInfoJson = {
-            game: stream.game_name,
-            title: stream.title,
-            thumbnailURL: stream.thumbnail_url
-              .replace("{width}", 716)
-              .replace("{height}", 404),
-            streamerName: stream.user_login,
-            streamStart: stream.started_at,
-            profileURL: user.profile_image_url,
-            streamURL: `https://twitch.tv/${stream.user_login}`,
-            goingLiveMessage,
-          };
-
-          notifier.notify(streamInfoJson);
-        } catch (error) {
-          console.error("Error:", error);
-          // Handle the error here
-        }
-      } else {
-        console.log("Invalid hook sent to me");
-        // probably should error here as an invalid hook payload
-        res.send("Ok");
+        console.log(`Sending notification for ${streamer}`);
+        notifier.notify(streamInfoJson);
+      } catch (error) {
+        console.error("Error:", error);
+        // Handle the error here
       }
     } else {
-      console.log("It didn't seem to be a Twitch Hook");
-      // again, not normally called
-      // but dump out a OK
+      console.log("Invalid hook sent to me");
+      // probably should error here as an invalid hook payload
       res.send("Ok");
     }
-  });
+  } else {
+    console.log("It didn't seem to be a Twitch Hook");
+    // again, not normally called
+    // but dump out a OK
+    res.send("Ok");
+  }
+});
