@@ -1,5 +1,5 @@
 import { readFileSync } from "fs";
-import { createServer } from "https";
+import { createServer } from "http";
 import TwitchClient from "./twitch.js";
 import DiscordNotifier from "./discord.js";
 import "dotenv/config";
@@ -31,12 +31,7 @@ const streamersData = JSON.parse(readFileSync("./streamers.json", "utf-8"));
 // Express basics
 const app = express();
 
-const sslOptions = {
-  key: readFileSync(config.sslKeyPath),
-  cert: readFileSync(config.sslCertPath),
-};
-
-const http = createServer(sslOptions, app);
+const http = createServer(app);
 
 http.listen(config.port, async function () {
   console.log("Server raised on", config.port);
