@@ -60,7 +60,7 @@ http.listen(config.port, async function () {
       await twitchClient.createOnlineWebhookSubscription(
         streamerID,
         process.env.CALLBACK_URL,
-        "bookdub_secret22"
+        process.env.HOOK_SECRET
       );
     } else {
       console.log("Subscription already exists for", streamer.streamer_name);
