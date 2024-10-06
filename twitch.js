@@ -130,46 +130,23 @@ class TwitchClient {
     return streams.data[0];
   }
 
-  async getStreamByName(username) {
-    const streams = await this.#makeRequest(
-      `https://api.twitch.tv/helix/streams?user_login=${username}`
-    );
-    return streams.data[0];
+  async getStreamByName(username, retries = 3, backoff = 1000) {
+    try {
+      const streams = await this.#makeRequest(
+        `https://api.twitch.tv/helix/streams?user_login=${username}`
+      );
+      return streams.data[0];
+    } catch (error) {
+      if (retries > 0) {
+        console.warn(`Retrying in ${backoff}ms... (${retries} retries left)`);
+        await new Promise((resolve) => setTimeout(resolve, backoff));
+        return this.getStreamByName(username, retries - 1, backoff * 2); // Exponential backoff
+      } else {
+        throw new Error(`Failed after multiple attempts: ${error.message}`);
+      }
+    }
   }
 }
 
-// const twitchClient = new TwitchClient(
-
-// );
-
 export default TwitchClient;
 
-// await twitchClient.connect();
-// const user = await twitchClient.getUserByName("king_kvothe");
-// console.log(user);
-// const stream = await twitchClient.getStreamByName("king_kvothe");
-// console.log(stream);
-
-// const streamInfoJson = {
-//   game: stream.game_name,
-//   title: stream.title,
-//   thumbnailURL: stream.thumbnail_url
-//     .replace("{width}", 716)
-//     .replace("{height}", 404),
-//   streamerName: stream.user_login,
-//   streamStart: stream.started_at,
-//   profileURL: user.profile_image_url,
-//   streamURL: `https://twitch.tv/${stream.user_login}`,
-//   //   goingLiveMessage,
-// };
-
-// console.log(streamInfoJson);
-// console.log(await twitchClient.getUsersByNames(["elisthetic", "king_kvothe"]));
-// await twitchClient.getSubscriptions().then(console.log).catch(console.error);
-// await twitchClient.deleteSubscription("ac21eb5f-7b16-405b-b816-47d9055e5ace");
-// await twitchClient.createOnlineWebhookSubscription(
-//   "104889000",
-//   "https://a880-23-123-247-200.ngrok-free.app",
-//   "bookdub_secret22"
-// );
-// await twitchClient.getSubscriptions().then(console.log).catch(console.error);
