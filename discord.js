@@ -59,9 +59,9 @@ class DiscordNotifier {
     console.log(message.status, message.statusText, await message.text());
   }
 
-  async sendMessage(message) {
+  async sendMessage(content) {
     const messageTemplate = {
-      content: message,
+      content,
     };
 
     const message = await fetch(this.DISCORD_WEBHOOK, {
