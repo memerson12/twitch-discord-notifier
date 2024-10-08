@@ -165,6 +165,13 @@ app.route("/").post(async (req, res) => {
         const user = await twitchClient.getUserByName(streamer);
         const stream = await twitchClient.getStreamByName(streamer);
 
+        if (!stream) {
+          notifier.sendMessage(
+            `Could not fetch stream data for ${streamer} (meme needs to fix this ;-; (he isnt sure why this happens))`
+          );
+          return;
+        }
+
         const goingLiveMessage = streamersData.find(
           (streamerInfo) =>
             streamerInfo.streamer_name === event.broadcaster_user_login
