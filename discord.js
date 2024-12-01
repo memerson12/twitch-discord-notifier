@@ -58,6 +58,21 @@ class DiscordNotifier {
     });
     console.log(message.status, message.statusText, await message.text());
   }
+
+  async sendMessage(content) {
+    const messageTemplate = {
+      content,
+    };
+
+    const message = await fetch(this.DISCORD_WEBHOOK, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(messageTemplate),
+    });
+    console.log(message.status, message.statusText, await message.text());
+  }
 }
 
 export default DiscordNotifier;
