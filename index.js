@@ -121,6 +121,10 @@ app.use(
   })
 );
 
+app.route("/").get((req, res) => {
+  res.send("You have been notified :3");
+});
+
 // Routes
 app.route("/").post(async (req, res) => {
   if (res.headersSent) return;
