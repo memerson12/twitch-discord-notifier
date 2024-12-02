@@ -58,7 +58,12 @@ http.listen(config.port, async function () {
         process.env.HOOK_SECRET
       );
     } else {
-      console.log("Subscription already exists for", streamer.streamer_name);
+      console.log(
+        "Subscription already exists for",
+        streamer.streamer_name,
+        " | Status: ",
+        currentSubs.data[currentSub].status
+      );
     }
 
     currentSubs.data.splice(currentSub, 1);
