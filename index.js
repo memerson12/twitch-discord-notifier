@@ -58,9 +58,10 @@ http.listen(config.port, async function () {
         process.env.HOOK_SECRET
       );
     } else {
+      const paddedStreamerName = streamer.streamer_name.padEnd(20, " ");
       console.log(
         "Subscription already exists for",
-        streamer.streamer_name,
+        paddedStreamerName,
         " | Status: ",
         currentSubs.data[currentSub].status
       );
