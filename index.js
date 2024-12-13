@@ -165,33 +165,31 @@ app.route("/").post(async (req, res) => {
         const user = await twitchClient.getUserByName(streamer);
         const stream = await twitchClient.getStreamByName(streamer);
 
-        if (!stream) {
-          notifier.sendMessage(
-            `Could not fetch stream data for ${streamer} (meme needs to fix this ;-; (he isnt sure why this happens))`
-          );
-          return;
-        }
-
         const goingLiveMessage = streamersData.find(
           (streamerInfo) =>
             streamerInfo.streamer_name === event.broadcaster_user_login
         ).going_live_message;
 
-        const streamInfoJson = {
-          game: stream.game_name,
-          title: stream.title,
-          thumbnailURL: stream.thumbnail_url
-            .replace("{width}", 800)
-            .replace("{height}", 500),
-          streamerName: stream.user_login,
-          streamStart: stream.started_at,
-          profileURL: user.profile_image_url,
-          streamURL: `https://twitch.tv/${stream.user_login}`,
-          goingLiveMessage,
-        };
+        if (stream) {
+          const streamInfoJson = {
+            game: stream.game_name,
+            title: stream.title,
+            thumbnailURL: stream.thumbnail_url
+              .replace("{width}", 800)
+              .replace("{height}", 500),
+            streamerName: stream.user_login,
+            streamStart: stream.started_at,
+            profileURL: user.profile_image_url,
+            streamURL: `https://twitch.tv/${stream.user_login}`,
+            goingLiveMessage,
+          };
 
-        console.log(`Sending notification for ${streamer}`);
-        notifier.notify(streamInfoJson);
+          console.log(`Sending notification for ${streamer}`);
+          notifier.notify(streamInfoJson);
+        } else {
+          console.warn("Was not able to fetch stream info")
+          notifier.sendMessage(`[${goingLiveMessage}](https://twitch.tv/${stream.user_login})`)
+        }
       } catch (error) {
         console.error("Error:", error);
         // Handle the error here
