@@ -1,16 +1,20 @@
-import express from 'express';
-import TwitchClient from '../services/twitch.js';
-import DiscordNotifier from '../services/discord.js';
+import express from "express";
+import { readFileSync } from "fs";
+import TwitchClient from "../services/twitch.js";
+import DiscordNotifier from "../services/discord.js";
 
 const router = express.Router();
 const twitchClient = new TwitchClient();
 const notifier = new DiscordNotifier();
 
-router.post('/', async (req, res) => {
+router.post("/", async (req, res) => {
   if (res.headersSent) return;
 
   if (req.twitch_eventsub) {
-    if (req.headers["twitch-eventsub-message-type"] == "webhook_callback_verification") {
+    if (
+      req.headers["twitch-eventsub-message-type"] ==
+      "webhook_callback_verification"
+    ) {
       if (req.body.hasOwnProperty("challenge")) {
         console.log("Got a challenge, return the challenge");
         res.send(encodeURIComponent(req.body.challenge));
@@ -29,7 +33,9 @@ router.post('/', async (req, res) => {
         const user = await twitchClient.getUserByName(streamer);
         const stream = await twitchClient.getStreamByName(streamer);
 
-        const streamersData = JSON.parse(readFileSync("./data/streamers.json", "utf-8"));
+        const streamersData = JSON.parse(
+          readFileSync("./data/streamers.json", "utf-8")
+        );
         const goingLiveMessage = streamersData.find(
           (streamerInfo) =>
             streamerInfo.streamer_name === event.broadcaster_user_login
@@ -51,8 +57,10 @@ router.post('/', async (req, res) => {
           console.log(`Sending notification for ${streamer}`);
           notifier.notify(streamInfoJson);
         } else {
-          console.warn("Was not able to fetch stream info")
-          notifier.sendMessage(`[${goingLiveMessage}](https://twitch.tv/${stream.user_login})`)
+          console.warn("Was not able to fetch stream info");
+          notifier.sendMessage(
+            `[${goingLiveMessage}](https://twitch.tv/${stream.user_login})`
+          );
         }
       } catch (error) {
         console.error("Error:", error);
