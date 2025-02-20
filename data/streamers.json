@@ -1,10 +1,34 @@
 [
   {
-    "streamer_name": "elisthetic",
-    "going_live_message": "Yooo <@&11133> friend just went live"
+    "streamer_name": "king_kvothe",
+    "going_live_message": "I'm just testing stream notifs, nothing actually on the stream :)"
   },
   {
-    "streamer_name": "king_kvothe",
-    "going_live_message": "This is the message new message"
+    "streamer_name": "diadlamonds",
+    "going_live_message": "<@&1336463425324453909> DIAAAA LIVEEEEE :3333 <3333"
+  },
+  {
+    "streamer_name": "dexterwild",
+    "going_live_message": "<@&1258637119597842452> Dex has gone wild and is now live!"
+  },
+  {
+    "streamer_name": "deemo_e",
+    "going_live_message": "<@&1258637245653581945> Deemo the Demon is Live!"
+  },
+  {
+    "streamer_name": "he1ian",
+    "going_live_message": "<@&1258637335042588753> Helian is circling around the sun as we speak WHILE LIVE!"
+  },
+  {
+    "streamer_name": "k33i3y",
+    "going_live_message": "<@&1280999608138465342> KEELEY AND MAYBE PENNY ARE LIVE"
+  },
+  {
+    "streamer_name": "shig_tv",
+    "going_live_message": "<@&1289044329016332369> <:shigCute:1221532187573358702> Shing is live!! <:shigCute:1221532187573358702>"
+  },
+  {
+    "streamer_name": "carolcake",
+    "going_live_message": "<@&1317000594371641375> <:caroFlower:1306772490911219832> caro is cooking and it might be a cake <:caroFLower:1306772490911219832>"
   }
 ]

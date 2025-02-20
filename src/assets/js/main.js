@@ -34,7 +34,7 @@ async function loadStreamers() {
         (streamer) => `
           <div class="streamer-item" id="${streamer.streamer_name}">
               <input type="text" value="${streamer.streamer_name}" aria-label="Streamer name">
-              <input type="text" value="${streamer.going_live_message}" aria-label="Going live message">      
+              <input type="textarea" value="${streamer.going_live_message}" aria-label="Going live message">      
               <button class="update-btn" onclick="updateStreamer('${streamer.streamer_name}', this.parentElement.children[0].value, this.parentElement.children[1].value)">Update</button>
               <button class="delete-btn" onclick="deleteStreamer('${streamer.streamer_name}')">Delete</button>
           </div>

@@ -1,5 +1,6 @@
 import express from "express";
 import session from "express-session";
+import MemoryStore from "memorystore";
 import { json } from "express";
 import { config } from "./config/index.js";
 import { verifyTwitchWebhook } from "./middleware/twitch-verify.js";
@@ -14,13 +15,22 @@ import webhookRoutes from "./routes/webhook.js";
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const app = express();
 
-// Session middleware
+// Create MemoryStore instance
+const MemoryStoreSession = MemoryStore(session);
+
+// Session middleware with MemoryStore
 app.use(
   session({
+    cookie: {
+      maxAge: 86400000, // 24 hours
+      secure: process.env.NODE_ENV === "production",
+    },
+    store: new MemoryStoreSession({
+      checkPeriod: 86400000, // prune expired entries every 24h
+    }),
     secret: config.hook_secret || "your-secret-key",
     resave: false,
     saveUninitialized: false,
-    cookie: { secure: false },
   })
 );
 
