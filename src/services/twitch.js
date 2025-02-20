@@ -1,10 +1,11 @@
 import fetch from "node-fetch";
+import { config } from "../config/index.js";
 
 class TwitchClient {
   #access_token;
-  constructor(clientId, clientSecret) {
-    this.clientId = clientId;
-    this.clientSecret = clientSecret;
+  constructor() {
+    this.clientId = config.twitch.clientId;
+    this.clientSecret = config.twitch.clientSecret;
   }
 
   async connect() {
@@ -68,7 +69,7 @@ class TwitchClient {
     );
   }
 
-  async createOnlineWebhookSubscription(userId, webhookUrl, secret) {
+  async createOnlineWebhookSubscription(userId) {
     const body = {
       type: "stream.online",
       version: "1",
@@ -77,8 +78,8 @@ class TwitchClient {
       },
       transport: {
         method: "webhook",
-        callback: webhookUrl,
-        secret: secret,
+        callback: config.twitch.callbackUrl,
+        secret: config.hook_secret,
       },
     };
 
@@ -140,7 +141,7 @@ class TwitchClient {
       if (retries > 0) {
         console.warn(`Retrying in ${backoff}ms... (${retries} retries left)`);
         await new Promise((resolve) => setTimeout(resolve, backoff));
-        return this.getStreamByName(username, retries - 1, backoff * 2); // Exponential backoff
+        return this.getStreamByName(username, retries - 1, backoff * 2);
       } else {
         throw new Error(`Failed after multiple attempts: ${error.message}`);
       }
@@ -149,4 +150,3 @@ class TwitchClient {
 }
 
 export default TwitchClient;
-

@@ -1,9 +1,9 @@
 import fetch from "node-fetch";
-import "dotenv/config";
+import { config } from "../config/index.js";
 
 class DiscordNotifier {
   constructor() {
-    this.DISCORD_WEBHOOK = process.env.DISCORD_WEBHOOK;
+    this.DISCORD_WEBHOOK = config.discord.webhook;
   }
 
   async notify(streamInfoJson) {
