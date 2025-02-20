@@ -24,6 +24,8 @@ app.use(
     cookie: {
       maxAge: 86400000, // 24 hours
       secure: process.env.NODE_ENV === "production",
+      sameSite: "lax",
+      httpOnly: true,
     },
     store: new MemoryStoreSession({
       checkPeriod: 86400000, // prune expired entries every 24h
@@ -31,6 +33,7 @@ app.use(
     secret: config.hook_secret || "your-secret-key",
     resave: false,
     saveUninitialized: false,
+    proxy: process.env.NODE_ENV === "production", // trust the reverse proxy
   })
 );
 
