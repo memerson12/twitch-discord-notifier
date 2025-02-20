@@ -3,120 +3,35 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Streamers Management</title>
-    <style>
-      body {
-        font-family: Arial, sans-serif;
-        max-width: 800px;
-        margin: 0 auto;
-        padding: 20px;
-        background-color: #f5f5f5;
-      }
-      .header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-bottom: 20px;
-      }
-      .streamer-list {
-        background: white;
-        padding: 20px;
-        border-radius: 8px;
-        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-      }
-      .streamer-item {
-        display: grid;
-        grid-template-columns: 1fr 2fr auto auto;
-        gap: 10px;
-        margin-bottom: 10px;
-        padding: 10px;
-        border: 1px solid #ddd;
-        border-radius: 4px;
-      }
-      .add-form {
-        background: white;
-        padding: 20px;
-        border-radius: 8px;
-        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-        margin-top: 20px;
-      }
-      input,
-      button {
-        padding: 8px;
-        margin: 5px;
-        border: 1px solid #ddd;
-        border-radius: 4px;
-      }
-      button {
-        background: #6441a5;
-        color: white;
-        border: none;
-        cursor: pointer;
-      }
-      button:hover {
-        background: #7d5bbe;
-      }
-      .delete-btn {
-        background: #dc3545;
-      }
-      .delete-btn:hover {
-        background: #c82333;
-      }
-      #logoutBtn {
-        background: #6c757d;
-      }
-      #logoutBtn:hover {
-        background: #5a6268;
-      }
-      .update-btn {
-        background: #28a745;
-      }
-      .update-btn:hover {
-        background: #218838;
-      }
-      .toast {
-        position: fixed;
-        bottom: 20px;
-        right: 20px;
-        padding: 12px 24px;
-        border-radius: 4px;
-        display: none;
-        animation: slideIn 0.3s, fadeOut 0.5s 2.5s;
-        z-index: 1000;
-        color: white;
-      }
-
-      .toast-success {
-        background-color: #28a745;
-      }
-
-      .toast-error {
-        background-color: #dc3545;
-      }
-
-      @keyframes slideIn {
-        from {
-          transform: translateX(100%);
-        }
-        to {
-          transform: translateX(0);
-        }
-      }
-
-      @keyframes fadeOut {
-        from {
-          opacity: 1;
-        }
-        to {
-          opacity: 0;
-        }
-      }
-    </style>
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+    />
+    <meta name="theme-color" content="#6441a5" />
+    <title>BookDub Streamer Notif Management</title>
+    <link
+      rel="apple-touch-icon"
+      sizes="180x180"
+      href="/images/apple-touch-icon.png"
+    />
+    <link
+      rel="icon"
+      type="image/png"
+      sizes="32x32"
+      href="/images/favicon-32x32.png"
+    />
+    <link
+      rel="icon"
+      type="image/png"
+      sizes="16x16"
+      href="/images/favicon-16x16.png"
+    />
+    <link rel="stylesheet" href="/css/styles.css" />
   </head>
   <body>
     <div id="toast" class="toast"></div>
     <div class="header">
-      <h1>Streamers Management</h1>
+      <h1>BookDub Streamer Notification Management</h1>
       <button id="logoutBtn" onclick="logout()">Logout</button>
     </div>
 
@@ -135,133 +50,6 @@
       <button onclick="addStreamer()">Add Streamer</button>
     </div>
 
-    <script>
-      function showToast(message, type = "success") {
-        const toast = document.getElementById("toast");
-        toast.textContent = message;
-        toast.className =
-          "toast " + (type === "error" ? "toast-error" : "toast-success");
-        toast.style.display = "block";
-
-        setTimeout(() => {
-          toast.style.display = "none";
-        }, 3000);
-      }
-
-      async function loadStreamers() {
-        try {
-          const response = await fetch("/api/streamers");
-          if (response.status === 401) {
-            window.location.href = "/login.html";
-            return;
-          }
-          const streamers = await response.json();
-          const listElement = document.getElementById("streamerList");
-
-          listElement.innerHTML = streamers
-            .map(
-              (streamer) => `
-                    <div class="streamer-item" id="${streamer.streamer_name}">
-                        <input type="text" value="${streamer.streamer_name}">
-                        <input type="text" value="${streamer.going_live_message}">      
-                        <button class="update-btn" onclick="updateStreamer('${streamer.streamer_name}', this.parentElement.children[0].value, this.parentElement.children[1].value)">Update</button>
-                        <button class="delete-btn" onclick="deleteStreamer('${streamer.streamer_name}')">Delete</button>
-                    </div>
-                `
-            )
-            .join("");
-        } catch (error) {
-          console.error("Error loading streamers:", error);
-          window.alert("Error loading streamers");
-        }
-      }
-
-      async function updateStreamer(oldName, newName, newMessage) {
-        try {
-          const response = await fetch("/api/streamers", {
-            method: "PUT",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-              oldName,
-              newName,
-              newMessage,
-            }),
-          });
-          if (response.status === 401) {
-            window.location.href = "/login.html";
-            return;
-          } else if (response.status === 404) {
-            showToast("Streamer not found", "error");
-          } else if (response.status === 400) {
-            showToast("Invalid Twitch username", "error");
-          } else {
-            showToast("Streamer updated successfully!");
-          }
-          loadStreamers();
-        } catch (error) {
-          console.error("Error updating streamer:", error);
-          showToast("Error updating streamer", "error");
-        }
-      }
-
-      async function deleteStreamer(streamerName) {
-        try {
-          const response = await fetch("/api/streamers", {
-            method: "DELETE",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ streamerName }),
-          });
-          if (response.status === 401) {
-            window.location.href = "/login.html";
-            return;
-          }
-          showToast("Streamer deleted successfully!");
-          loadStreamers();
-        } catch (error) {
-          console.error("Error deleting streamer:", error);
-          showToast("Error deleting streamer", "error");
-        }
-      }
-
-      async function addStreamer() {
-        const nameInput = document.getElementById("newStreamerName");
-        const messageInput = document.getElementById("newGoingLiveMessage");
-
-        try {
-          const response = await fetch("/api/streamers", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-              streamer_name: nameInput.value,
-              going_live_message: messageInput.value,
-            }),
-          });
-          if (response.status === 401) {
-            window.location.href = "/login.html";
-            return;
-          }
-
-          nameInput.value = "";
-          messageInput.value = "";
-          showToast("Streamer added successfully!");
-          loadStreamers();
-        } catch (error) {
-          console.error("Error adding streamer:", error);
-          showToast("Error adding streamer", "error");
-        }
-      }
-
-      async function logout() {
-        try {
-          await fetch("/logout", { method: "POST" });
-          window.location.href = "/login.html";
-        } catch (error) {
-          console.error("Error logging out:", error);
-        }
-      }
-
-      // Load streamers when page loads
-      loadStreamers();
-    </script>
+    <script src="/js/main.js"></script>
   </body>
 </html>
