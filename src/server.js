@@ -28,7 +28,7 @@ async function setupTwitchSubscriptions() {
 
     if (currentSub === -1) {
       console.log("Creating Subscription for", streamer.streamer_name);
-      // await twitchClient.createOnlineWebhookSubscription(streamerID);
+      await twitchClient.createOnlineWebhookSubscription(streamerID);
     } else {
       const paddedStreamerName = streamer.streamer_name.padEnd(20, " ");
       console.log(
@@ -48,7 +48,7 @@ async function setupTwitchSubscriptions() {
       (await twitchClient.getUserById(sub.condition.broadcaster_user_id))
         .display_name
     );
-    // await twitchClient.deleteSubscription(sub.id);
+    await twitchClient.deleteSubscription(sub.id);
   }
 
   console.log("Finished Subscription Setup");
