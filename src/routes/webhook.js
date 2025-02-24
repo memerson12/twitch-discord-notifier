@@ -30,6 +30,8 @@ router.post("/", async (req, res) => {
         const event = req.body.event;
         const streamer = event.broadcaster_user_name;
 
+        console.log(`--------\nIncoming event for ${streamer}`);
+
         const user = await twitchClient.getUserByName(streamer);
         const stream = await twitchClient.getStreamByName(streamer);
 
@@ -48,10 +50,12 @@ router.post("/", async (req, res) => {
             thumbnailURL: stream.thumbnail_url
               .replace("{width}", 800)
               .replace("{height}", 500),
-            streamerName: stream.user_login,
-            streamStart: stream.started_at,
-            profileURL: user.profile_image_url,
-            streamURL: `https://twitch.tv/${stream.user_login}`,
+            streamerName: stream.user_login ?? streamer,
+            streamStart: stream.started_at ?? new Date().toISOString(),
+            profileURL:
+              user.profile_image_url ??
+              "https://static-cdn.jtvnw.net/jtv_user_pictures/xarth/404_user_300x300.png",
+            streamURL: `https://twitch.tv/${stream.user_login ?? streamer}`,
             goingLiveMessage,
           };
           console.log(`Sending notification for ${streamer}`);
@@ -59,7 +63,7 @@ router.post("/", async (req, res) => {
         } else {
           console.warn("Was not able to fetch stream info");
           notifier.sendMessage(
-            `[${goingLiveMessage}](https://twitch.tv/${stream.user_login})`
+            `[${goingLiveMessage}](https://twitch.tv/${streamer})`
           );
         }
       } catch (error) {
