@@ -63,7 +63,7 @@ router.post("/", async (req, res) => {
         } else {
           console.warn("Was not able to fetch stream info");
           notifier.sendMessage(
-            `[${goingLiveMessage}](https://twitch.tv/${streamer})`
+            `${goingLiveMessage}: https://twitch.tv/${streamer}`
           );
         }
       } catch (error) {

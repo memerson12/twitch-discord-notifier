@@ -136,7 +136,9 @@ class TwitchClient {
       const streams = await this.#makeRequest(
         `https://api.twitch.tv/helix/streams?user_login=${username}`
       );
-      return streams.data[0];
+      let stream = streams.data[0];
+      if (!stream) throw new Error("No stream found");
+      return stream;
     } catch (error) {
       if (retries > 0) {
         console.warn(`Retrying in ${backoff}ms... (${retries} retries left)`);
