@@ -19,9 +19,14 @@ async function setupTwitchSubscriptions() {
   console.log("Fetched Current Subscriptions");
 
   for (const streamer of streamersData) {
-    const streamerID = (
-      await twitchClient.getUserByName(streamer.streamer_name)
-    ).id;
+    const streamerFetch = await twitchClient.getUserByName(
+      streamer.streamer_name
+    );
+    if (!streamerFetch) {
+      console.warn(`Could not get streamer by name: ${streamer.streamer_name}`);
+      continue;
+    }
+    const streamerID = streamerFetch.id;
     const currentSub = currentSubs.data.findIndex(
       (sub) => sub.condition.broadcaster_user_id === streamerID
     );
