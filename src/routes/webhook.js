@@ -38,11 +38,11 @@ router.post("/", async (req, res) => {
         const streamersData = JSON.parse(
           readFileSync("./data/streamers.json", "utf-8")
         );
-        console.log(streamersData);
         const goingLiveMessage = streamersData.find(
-          (streamerInfo) =>
-            streamerInfo.streamer_name === event.broadcaster_user_login
-        ).going_live_message;
+          (streamerInfo) => {
+            return streamerInfo.streamer_name.toLowerCase() === event.broadcaster_user_login.toLowerCase()
+          }
+        )?.going_live_message ?? `${streamer} is now live`;
 
         if (stream) {
           const streamInfoJson = {
