@@ -38,6 +38,7 @@ router.post("/", async (req, res) => {
         const streamersData = JSON.parse(
           readFileSync("./data/streamers.json", "utf-8")
         );
+        console.log(streamersData);
         const goingLiveMessage = streamersData.find(
           (streamerInfo) =>
             streamerInfo.streamer_name === event.broadcaster_user_login
