@@ -12,4 +12,6 @@ export const config = {
   discord: {
     webhook: process.env.DISCORD_WEBHOOK,
   },
+  pageTitle: process.env.PAGE_TITLE || "BookDub Streamer Notification Management",
+  faviconUrl: process.env.FAVICON_URL || "/images/favicon-32x32.png",
 };
