@@ -76,8 +76,8 @@ app.get("/", requireAuth, (req, res) => {
   try {
     const filePath = join(__dirname, "..", "public", "index.html");
     const html = renderTemplate(filePath, {
-      "%PAGE_TITLE%": config.pageTitle || "BookDub Streamer Notification Management",
-      "%FAVICON_URL%": config.faviconUrl || "/images/favicon-32x32.png",
+      "%PAGE_TITLE%": config.page_title || "BookDub Streamer Notification Management",
+      "%FAVICON_URL%": config.favicon_url || "/images/favicon-32x32.png",
     });
     res.type("html").send(html);
   } catch (err) {
@@ -90,8 +90,8 @@ app.get("/login", (req, res) => {
   try {
     const filePath = join(__dirname, "..", "public", "login.html");
     const html = renderTemplate(filePath, {
-      "%PAGE_TITLE%": config.pageTitle || "BookDub Streamer Notification Management",
-      "%FAVICON_URL%": config.faviconUrl || "/images/favicon-32x32.png",
+      "%PAGE_TITLE%": config.page_title || "BookDub Streamer Notification Management",
+      "%FAVICON_URL%": config.favicon_url || "/images/favicon-32x32.png",
     });
     res.type("html").send(html);
   } catch (err) {
