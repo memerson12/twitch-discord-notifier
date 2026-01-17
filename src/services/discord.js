@@ -44,9 +44,9 @@ class DiscordNotifier {
       ],
       components: [],
       actions: {},
-      username: "BookDub Stream Notifications",
+      username: config.bot_name,
       avatar_url:
-        "https://cdn.discordapp.com/icons/1123463570445844480/6211998a5621eb19fe58701d30def49d.webp?size=240",
+        config.bot_avatar_url,
     };
 
     const message = await fetch(this.DISCORD_WEBHOOK, {
