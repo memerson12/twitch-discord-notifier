@@ -127,7 +127,7 @@ class TwitchClient {
   async getStreamByUserId(userId) {
     const streams = await this.#makeRequest(
       `https://api.twitch.tv/helix/streams?user_id=${userId}`
-    );
+    );``
     return streams.data[0];
   }
 
@@ -145,6 +145,7 @@ class TwitchClient {
         await new Promise((resolve) => setTimeout(resolve, backoff));
         return this.getStreamByName(username, retries - 1, backoff * 2);
       } else {
+        console.error("All retries failed.");
         throw new Error(`Failed after multiple attempts: ${error.message}`);
       }
     }
