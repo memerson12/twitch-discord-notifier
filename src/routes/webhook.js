@@ -50,7 +50,8 @@ router.post("/", async (req, res) => {
             title: stream.title,
             thumbnailURL: stream.thumbnail_url
               .replace("{width}", 800)
-              .replace("{height}", 500),
+              .replace("{height}", 500)
+              .concat(`?t=${new Date().getTime()}`),
             streamerName: stream.user_login ?? streamer,
             streamStart: stream.started_at ?? new Date().toISOString(),
             profileURL:
